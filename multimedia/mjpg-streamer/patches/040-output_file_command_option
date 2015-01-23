@@ -1,0 +1,28 @@
+*** ../openwrt3.14/build_dir/target-mipsel_24kec+dsp_uClibc-0.9.33.2/mjpg-streamer-r182/plugins/output_file/output_file.c	2012-03-02 12:24:18.000000000 -0600
+--- build_dir/target-mipsel_24kec+dsp_uClibc-0.9.33.2/mjpg-streamer-r182/plugins/output_file/output_file.c	2015-01-22 08:42:13.000000000 -0600
+***************
+*** 381,386 ****
+--- 381,388 ----
+              {"input", required_argument, 0, 0},
+              {"m", required_argument, 0, 0},
+              {"mjpeg", required_argument, 0, 0},
++             {"c", required_argument, 0, 0},
++             {"command", required_argument, 0, 0},
+              {0, 0, 0, 0}
+          };
+  
+***************
+*** 446,451 ****
+--- 448,459 ----
+              DBG("case 12,13\n");
+              mjpgFileName = strdup(optarg);
+              break;
++             /* c command */
++         case 14:
++         case 15:
++             DBG("case 14,15\n");
++             command = strdup(optarg);
++             break;
+          }
+      }
+  
