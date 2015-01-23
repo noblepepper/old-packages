@@ -1,5 +1,5 @@
-*** ../openwrt3.14/build_dir/target-mipsel_24kec+dsp_uClibc-0.9.33.2/mjpg-streamer-r182/plugins/output_file/output_file.c	2012-03-02 12:24:18.000000000 -0600
---- build_dir/target-mipsel_24kec+dsp_uClibc-0.9.33.2/mjpg-streamer-r182/plugins/output_file/output_file.c	2015-01-22 08:42:13.000000000 -0600
+--- a/plugins/output_file/output_file.c
++++ b/plugins/output_file/output_file.c
 ***************
 *** 381,386 ****
 --- 381,388 ----
