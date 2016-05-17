@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=alpine
 PKG_VERSION:=2.20
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE_URL:=http://patches.freeiz.com/alpine/release/src/
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
@@ -35,7 +35,7 @@ define Package/alpine/Default
 endef
 
 define Package/alpine/Default/description
- Alpine (Alternatively Licenced Program for Internet News and Email) is a
+ Alpine (Alternatively Licensed Program for Internet News and Email) is a
  free software email client developed at the University of Washington.
  It is suitable for both the inexperienced email user as well as for
  the most demanding power user.
@@ -44,7 +44,7 @@ endef
 define Package/alpine
 $(call Package/alpine/Default)
   TITLE+= (with OpenSSL support)
-  DEPENDS+= +libcrypto +libopenssl
+  DEPENDS+= +libopenssl
   VARIANT:=ssl
 endef
 
