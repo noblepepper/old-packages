@@ -85,7 +85,7 @@ define Build/Prepare
 	ln -sf $(PKG_BUILD_DIR)/$(MPCSRC) $(PKG_BUILD_DIR)/mpc
 	tar -C $(PKG_BUILD_DIR) -xvjf $(DL_DIR)/$(MPFRSRC).tar.bz2
 	ln -sf $(PKG_BUILD_DIR)/$(MPFRSRC) $(PKG_BUILD_DIR)/mpfr
-	$(Build/Patch)
+#	$(Build/Patch)
 	patch -p1 -d "$(PKG_BUILD_DIR)" < ./patches/002-dont-choke-when-building-32bit-on-64bit.patch
 	patch -p1 -d "$(PKG_BUILD_DIR)" < ./patches/003-mpfr-longlong-mips.patch
 #uclibc needs -lm to build libcc1
