@@ -1,5 +1,5 @@
---- a/gcc/real.h	2016-05-17 09:12:48.409502689 -0500
-+++ b/gcc/real.h	2016-05-17 09:16:31.765836247 -0500
+--- a/gcc/real.h
++++ b/gcc/real.h
 @@ -75,9 +75,10 @@
     + (REAL_VALUE_TYPE_SIZE%HOST_BITS_PER_WIDE_INT ? 1 : 0)) /* round up */
  

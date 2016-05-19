@@ -85,13 +85,10 @@ define Build/Prepare
 	ln -sf $(PKG_BUILD_DIR)/$(MPCSRC) $(PKG_BUILD_DIR)/mpc
 	tar -C $(PKG_BUILD_DIR) -xvjf $(DL_DIR)/$(MPFRSRC).tar.bz2
 	ln -sf $(PKG_BUILD_DIR)/$(MPFRSRC) $(PKG_BUILD_DIR)/mpfr
-#	$(Build/Patch)
+	$(Build/Patch)
 	patch -p1 -d "$(PKG_BUILD_DIR)" < ./patches/002-dont-choke-when-building-32bit-on-64bit.patch
 	patch -p1 -d "$(PKG_BUILD_DIR)" < ./patches/003-mpfr-longlong-mips.patch
-#uclibc needs -lm to build libcc1
-ifdef CONFIG_USE_UCLIBC
-	patch -p1 -d "$(PKG_BUILD_DIR)" < ./patches/004-libcc1_uclibc_lm.patch
-endif
+
 #	poor man's fix for `none-openwrt-linux' not recognized when building with musl
 	cp $(PKG_BUILD_DIR)/config.sub $(PKG_BUILD_DIR)/mpfr/
 	cp $(PKG_BUILD_DIR)/config.sub $(PKG_BUILD_DIR)/gmp/
@@ -155,7 +152,7 @@ ENVLDFLAGS:="-Wl,-rpath=/usr/lib -Wl,--dynamic-linker=/usr/lib/$(DYNLINKER) -L/u
 
 define Package/gcc/install
 	$(INSTALL_DIR) $(1)/usr/bin $(1)/usr/lib $(1)/usr/lib/$(PKG_NAME)/$(REAL_GNU_TARGET_NAME)/$(PKG_VERSION)
-	cp -ar $(PKG_INSTALL_DIR)/usr/include $(1)/usr
+	cp -ar $(PKG_INSTALL_DIR)/usr/include $(1)/opt
 	cp -a $(PKG_INSTALL_DIR)/usr/bin/{$(REAL_GNU_TARGET_NAME)-{g++,gcc},cpp,gcov} $(1)/usr/bin
 	ln -s $(REAL_GNU_TARGET_NAME)-g++ $(1)/usr/bin/c++
 	ln -s $(REAL_GNU_TARGET_NAME)-g++ $(1)/usr/bin/g++
@@ -163,7 +160,7 @@ define Package/gcc/install
 	ln -s $(REAL_GNU_TARGET_NAME)-gcc $(1)/usr/bin/gcc
 	ln -s $(REAL_GNU_TARGET_NAME)-gcc $(1)/usr/bin/$(REAL_GNU_TARGET_NAME)-gcc-$(PKG_VERSION)
 	cp -ar $(PKG_INSTALL_DIR)/usr/lib/gcc $(1)/usr/lib
-	cp -ar $(TOOLCHAIN_DIR)/include $(1)/usr
+	cp -ar $(TOOLCHAIN_DIR)/include $(1)/opt
 	cp -a $(TOOLCHAIN_DIR)/lib/*.{o,so*} $(1)/usr/lib/$(PKG_NAME)/$(REAL_GNU_TARGET_NAME)/$(PKG_VERSION)
 	cp -a $(TOOLCHAIN_DIR)/lib/*nonshared*.a  $(1)/usr/lib/$(PKG_NAME)/$(REAL_GNU_TARGET_NAME)/$(PKG_VERSION)
 	rm -f $(1)/usr/lib/$(PKG_NAME)/$(REAL_GNU_TARGET_NAME)/$(PKG_VERSION)/libgo*
