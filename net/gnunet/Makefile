@@ -8,9 +8,9 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gnunet
-PKG_SOURCE_VERSION:=37179
+PKG_SOURCE_VERSION:=37738
 PKG_VERSION:=0.10.1-svn$(PKG_SOURCE_VERSION)
-PKG_RELEASE:=2
+PKG_RELEASE:=1
 
 # ToDo:
 #  - break-out {peer,name,data}store for each backend
@@ -25,7 +25,7 @@ PKG_LICENSE:=GPL-3.0
 PKG_LICENSE_FILES:=COPYING
 PKG_MAINTAINER:=Daniel Golle <daniel@makrotopia.org>
 
-# PKG_BUILD_PARALLEL:=1
+PKG_BUILD_PARALLEL:=1
 PKG_FIXUP:=gettext-version
 PKG_INSTALL:=1
 
@@ -179,7 +179,7 @@ define Package/gnunet/install
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) ./files/gnunet.defaults $(1)/etc/uci-defaults/gnunet
 	$(INSTALL_DIR) $(1)/lib/netifd/proto
-	$(INSTALL_BIN) ./files/gnunet-proto.sh $(1)/lib/netifd/proto
+	$(INSTALL_BIN) ./files/gnunet-proto.sh $(1)/lib/netifd/proto/gnunet.sh
 endef
 
 define Package/gnunet/conffiles
@@ -224,7 +224,7 @@ LIBEXEC_dv:=service-dv
 CONF_dv:=dv
 
 DEPENDS_fs:=+gnunet-datastore +gnunet-peerstore +libextractor
-BIN_fs:=auto-share directory download download-manager.scm fs publish unindex search
+BIN_fs:=auto-share directory download fs publish unindex search
 LIB_fs:=fs
 PLUGIN_fs:=block_fs
 LIBEXEC_fs:=helper-fs-publish service-fs
@@ -259,9 +259,9 @@ CONF_peerstore:=peerstore
 DEPENDS_flat:=+gnunet-gns
 PLUGIN_flat:=namecache_flat namestore_flat
 
-DEPENDS_mysql:=+gnunet-gns +gnunet-datastore +libmysqlclient
-LIB_mysql:=mysql
-PLUGIN_mysql:=datastore_mysql
+DEPENDS_mysql:=+gnunet-gns +gnunet-datastore +gnunet-social +libmysqlclient
+LIB_mysql:=mysql my
+PLUGIN_mysql:=datastore_mysql psycstore_mysql
 
 DEPENDS_pgsql:=+gnunet-gns +gnunet-datastore +libpq
 LIB_pgsql:=postgres pq
@@ -335,7 +335,8 @@ endef
 define PostInstFixSUIDPerms
   define Package/$(1)/postinst
 #!/bin/sh
-[ -e /usr/share/gnunet/.permfix ] && rm /usr/share/gnunet/.permfix
+[ -z "$IPKG_INSTROOT" ] || exit 0
+[ -e /usr/share/gnunet/.permfix ] && rm /usr/share/gnunet/.permfix || exit 0
   endef
 endef
 
