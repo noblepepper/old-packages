@@ -4,25 +4,28 @@
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
 #
-# Upgraded from 4.8.3 to 5.3.0
+# Build same version as toolchain 5.3.0 (OpenWrt Trunk Sept 23 1016), or 5.4.0 (Lede Sept 23 2016)
 
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gcc
-#<<<<<<< HEAD
-PKG_VERSION:=5.3.0
-PKG_RELEASE:=3
-#PKG_SOURCE_URL:=ftp://ftp.fu-berlin.de/unix/languages/gcc/releases/gcc-$(PKG_VERSION) \
-#     http://mirrors.rcn.net/pub/sourceware/gcc/releases/gcc-$(PKG_VERSION) \
-#    ftp://ftp.gnu.org/gnu/gcc/releases/gcc-$(PKG_VERSION)
-#=======
-#PKG_VERSION:=4.8.3
-#PKG_RELEASE:=1
+PKG_VERSION:=$(GCC_VERSION)
+PKG_RELEASE:=1
 PKG_SOURCE_URL:=@GNU/gcc/gcc-$(PKG_VERSION)
-#>>>>>>> f71320e23321b031a87e1e5aa1c89cdbabcef924
+
+ifeq ($(PKG_VERSION),5.3.0)
+  PKG_MD5SUM:=c9616fd448f980259c31de613e575719
+endif
+
+ifeq ($(PKG_VERSION),5.4.0)
+  PKG_MD5SUM:=4c626ac2a83ef30dfb9260e6f59c2b30
+endif
+
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
-PKG_MD5SUM:=c9616fd448f980259c31de613e575719
+# TODO: figure out why we use the toolchain patches when
+# 	we have our own patch directory. We need some of
+# 	our own anyway (see Build/Prepare section below)
 PATCH_DIR:=$(TOPDIR)/toolchain/gcc/patches/$(PKG_VERSION)
 PKG_INSTALL:=1
 PKG_FIXUP:=libtool
@@ -37,10 +40,10 @@ PKGVERSION=OpenWrt GCC $(PKG_VERSION)
 # not using sstrip here as this fucks up the .so's somehow
 STRIP:=$(TOOLCHAIN_DIR)/bin/$(TARGET_CROSS)strip
 RSTRIP:= \
-       NM="$(TOOLCHAIN_DIR)/bin/$(TARGET_CROSS)nm" \
-       STRIP="$(STRIP)" \
-       STRIP_KMOD="$(STRIP) --strip-debug" \
-       $(SCRIPT_DIR)/rstrip.sh
+	NM="$(TOOLCHAIN_DIR)/bin/$(TARGET_CROSS)nm" \
+	STRIP="$(STRIP)" \
+	STRIP_KMOD="$(STRIP) --strip-debug" \
+	$(SCRIPT_DIR)/rstrip.sh
 
 
 define Package/gcc
@@ -92,8 +95,10 @@ define Build/Prepare
 	tar -C $(PKG_BUILD_DIR) -xvjf $(DL_DIR)/$(MPFRSRC).tar.bz2
 	ln -sf $(PKG_BUILD_DIR)/$(MPFRSRC) $(PKG_BUILD_DIR)/mpfr
 	$(Build/Patch)
+# See todo above, we need these even after the toolchain patches
 	patch -p1 -d "$(PKG_BUILD_DIR)" < ./patches/002-dont-choke-when-building-32bit-on-64bit.patch
 	patch -p1 -d "$(PKG_BUILD_DIR)" < ./patches/003-mpfr-longlong-mips.patch
+	patch -p1 -d "$(PKG_BUILD_DIR)" < ./patches/930-osdefines.patch
 
 #	poor man's fix for `none-openwrt-linux' not recognized when building with musl
 	cp $(PKG_BUILD_DIR)/config.sub $(PKG_BUILD_DIR)/mpfr/
